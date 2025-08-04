@@ -54,3 +54,12 @@
 .user-table tr:hover {
   background-color: #e0f7ff;
 }
+.no-user {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 200px);
+  font-size: 24px;
+  color: #666;
+}
