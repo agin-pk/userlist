@@ -1,0 +1,56 @@
+.user-table-container {
+  padding: 32px;
+}
+
+.search-bar-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+  gap: 8px;
+  position: relative;
+}
+
+.search-icon {
+  color: #666;
+  position: absolute;
+  right: 12px;
+}
+
+.search-input {
+  padding: 8px 12px;
+  padding-left: 12px;
+  width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-table th {
+  background-color: #7661ff;
+  color: white;
+  cursor: pointer;
+  padding: 12px;
+  text-align: left;
+}
+
+.user-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+.user-table .odd {
+  background-color: #f5f5f5;
+}
+
+.user-table .even {
+  background-color: #ffffff;
+}
+
+.user-table tr:hover {
+  background-color: #e0f7ff;
+}
