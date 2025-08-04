@@ -1,15 +1,20 @@
 import axios from "axios";
 import "./userlist.css";
 import { useEffect, useState } from "react";
-import { Search, TriangleAlert } from "lucide-react";
+import {
+  ArrowDownNarrowWide,
+  ArrowUpNarrowWide,
+  Search,
+  TriangleAlert,
+} from "lucide-react";
 const UserList = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([]);
-  console.log("filteredUsers", filteredUsers);
+  const [sortKey, setSortKey] = useState("id");
+  const [sortOrder, setSortOrder] = useState("asc");
 
-  console.log("users", users);
   const getUsersList = async () => {
     try {
       const response = await axios.get(
@@ -20,14 +25,40 @@ const UserList = () => {
       console.error("Error fetching users:", error);
     }
   };
-  useEffect(() => {
-    const list = users.filter(
-      (item) =>
-        item.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-        item.id.toString().includes(debouncedSearch)
+  const handleSort = (key) => {
+    const order = sortKey === key && sortOrder === "asc" ? "desc" : "asc";
+    setSortKey(key);
+    setSortOrder(order);
+  };
+  const renderSortIcon = (columnKey, sortKey, sortOrder) => {
+    if (columnKey !== sortKey) return null;
+    const Icon = sortOrder === "asc" ? ArrowDownNarrowWide : ArrowUpNarrowWide;
+
+    return (
+      <Icon
+        size={16}
+        className='sort-icon'
+        style={{ display: "inline-block", verticalAlign: "middle" }}
+      />
     );
+  };
+  useEffect(() => {
+    const list = users
+      .filter(
+        (item) =>
+          item.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+          item.id.toString().includes(debouncedSearch)
+      )
+      .sort((a, b) => {
+        if (sortKey === "id") {
+          return sortOrder === "asc" ? a.id - b.id : b.id - a.id;
+        }
+        return sortOrder === "asc"
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
+      });
     setFilteredUsers(list);
-  }, [users, debouncedSearch]);
+  }, [users, debouncedSearch, sortKey, sortOrder]);
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(searchTerm), 300);
     return () => clearTimeout(timer);
@@ -39,21 +70,28 @@ const UserList = () => {
   return (
     <div className='user-table-container'>
       <div className='search-bar-wrapper'>
-        <Search className='search-icon' size={18} />
-        <input
-          type='text'
-          className='search-input'
-          placeholder='Search by ID or Name'
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <h2>Users List</h2>
+        <div className='search-bar'>
+          <Search className='search-icon' size={18} />
+          <input
+            type='text'
+            className='search-input'
+            placeholder='Search by ID or Name'
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
       {filteredUsers.length > 0 ? (
         <table className='user-table'>
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Name</th>
+              <th onClick={() => handleSort("id")}>
+                ID {renderSortIcon("id", sortKey, sortOrder)}
+              </th>
+              <th onClick={() => handleSort("name")}>
+                Name {renderSortIcon("name", sortKey, sortOrder)}
+              </th>
               <th>Address (City & Zipcode)</th>
               <th>Company Name</th>
             </tr>
